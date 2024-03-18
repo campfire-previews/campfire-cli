@@ -1,0 +1,315 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Setup for previewApp Review Apps
+Parameters:
+  DefaultName:
+    Description: Default Name Prefix For your AWS Content
+    Type: String
+    Default: preview-app-apps
+  ECRName:
+    Description: Name of the ECR Repository
+    Type: String
+    Default: preview-app-ecr
+Resources:
+  previewAppVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${DefaultName}"
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref previewAppVPC
+  previewAppIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${DefaultName}"
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref previewAppVPC
+      InternetGatewayId: !Ref previewAppIGW
+  InternetConnection:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref previewAppIGW
+  ClusterSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      VpcId: !Ref previewAppVPC
+      CidrBlock: 10.0.1.0/24
+      Tags:
+        - Key: Name
+          Value: !Sub "${DefaultName}"
+  ClusterInternet:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ClusterSubnet
+      RouteTableId: !Ref RouteTable
+  ALBSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      VpcId: !Ref previewAppVPC
+      CidrBlock: 10.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: !Sub "${DefaultName}-alb-a"
+  ALBInternetA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ALBSubnetA
+      RouteTableId: !Ref RouteTable
+  ALBSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub "${AWS::Region}b"
+      VpcId: !Ref previewAppVPC
+      CidrBlock: 10.0.3.0/24
+      Tags:
+        - Key: Name
+          Value: !Sub "${DefaultName}-alb-b"
+  ALBInternetB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ALBSubnetB
+      RouteTableId: !Ref RouteTable
+  ClusterSecurity:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${DefaultName}-cluster"
+      GroupDescription: Security group for the running ECS services
+      VpcId: !Ref previewAppVPC
+      SecurityGroupIngress:
+        - Description: Allow port 8080 inbound traffic
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref ALBSecurity
+      # By not defining SecurityGroupEgress, it allows all outbound traffic
+
+  # We don't need EFS right now, but will later
+  EFSSecurity:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${DefaultName}-efs"
+      GroupDescription: Security Group for the Elastic File System
+      VpcId: !Ref previewAppVPC
+
+      # Only let EFS talk to the cluster
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: !Ref ClusterSecurity
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          DestinationSecurityGroupId: !Ref ClusterSecurity
+  ALBSecurity:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${DefaultName}-alb"
+      GroupDescription: previewApp Security Group for the Application Load Balancer
+      VpcId: !Ref previewAppVPC
+
+      #Allow all incoming internet traffic to the ALB
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+      # Only let it talk to the cluster
+      SecurityGroupEgress:
+        - IpProtocol: TCP
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          # DestinationSecurityGroupId: !Ref ClusterSecurity
+
+  # We don't need EFS right now, but will later
+  EFS:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      AvailabilityZoneName: !Sub "${AWS::Region}a"
+      FileSystemTags:
+        - Key: Name
+          Value: !Sub "${DefaultName}"
+      PerformanceMode: generalPurpose
+      Encrypted: true
+  MountTarget:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFS
+      SecurityGroups:
+        - !Ref EFSSecurity
+      SubnetId: !Ref ClusterSubnet
+  previewAppRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref ECRName
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${DefaultName}"
+      SecurityGroups:
+        - !Ref ALBSecurity
+      Subnets:
+        - !Ref ALBSubnetA
+        - !Ref ALBSubnetB
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig:
+            ContentType: text/plain
+            StatusCode: "404"
+            MessageBody: There is no previewApp Review App here
+  previewAppTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: previewAppTaskExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: previewAppTaskExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - ecr:CreateRepository
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                Resource: "*"
+  GithubUser:
+    Type: AWS::IAM::User
+    Properties:
+      Policies:
+        - PolicyName: CreateAndDestroyReviewApps
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecs:DeleteService
+                  - iam:GetRole
+                  - ecs:RunTask
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:InitiateLayerUpload
+                  - ecr:CompleteLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:PutImage
+                  - ecr:BatchDeleteImage
+                  - elasticfilesystem:DeleteAccessPoint
+                  - elasticloadbalancing:DeleteRule
+                  - elasticloadbalancing:DeleteTargetGroup
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    aws:ResourceTag/previewAppApps: "four_eyes"
+              - Effect: Allow
+                Action:
+                  - elasticfilesystem:CreateAccessPoint
+                  - elasticfilesystem:DescribeAccessPoints
+                  - ecs:CreateService
+                  - ecs:DeregisterTaskDefinition
+                  - elasticloadbalancing:CreateRule
+                  - elasticloadbalancing:CreateTargetGroup
+                  - elasticfilesystem:DescribeFileSystems
+                  - elasticloadbalancing:Describe*
+                  - ecs:Describe*
+                  - ecs:List*
+                  - ec2:Describe*
+                  - sts:GetCallerIdentity
+                  - ecr:GetAuthorizationToken
+                  - ecs:RegisterTaskDefinition
+                Resource: "*"
+              - Effect: Allow
+                Action: iam:PassRole
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/previewAppTaskExecutionRole
+  UserCredentials:
+    Type: "AWS::IAM::AccessKey"
+    Properties:
+      UserName: !Ref GithubUser
+
+Outputs:
+  AccessKeyId:
+    Description: "Access Key"
+    Value: !Ref UserCredentials
+  AccessKeySecret:
+    Description: "Secret Key"
+    Value: !GetAtt UserCredentials.SecretAccessKey
+  VPCID:
+    Description: ID of the VPC
+    Value: !Ref previewAppVPC
+  ClusterSecurityGroupID:
+    Description: Cluster Security Group ID
+    Value: !Ref ClusterSecurity
+  ALBSecurityGroupID:
+    Description: Application Load Balancer Security Group ID
+    Value: !Ref ALBSecurity
+  ClusterSubnetID:
+    Description: Cluster Subnet ID
+    Value: !Ref ClusterSubnet
+  ALBSubnetAID:
+    Description: Application Load Balancer Subnet A ID
+    Value: !Ref ALBSubnetA
+  ALBSubnetBID:
+    Description: Application Load Balancer Subnet B ID
+    Value: !Ref ALBSubnetB
+  # Cannot get ID of IGW. I don't think it matters
+  # InternetGatewayID:
+  #   Description: Internet Gateway ID
+  #   Value:
+  RouteTableID:
+    Description: Route Table ID
+    Value: !Ref RouteTable
+  ALBARN:
+    Description: Application Load Balancer ARN
+    Value: !Ref ALB
+  ListenerArn:
+    Description: Application Load Balancer Listener ARN
+    Value: !Ref Listener
+  ALBDomain:
+    Description: Application Load Balancer Domain Name
+    Value: !GetAtt ALB.DNSName
+  EFSSecurityGroupID:
+    Description: Elastic File System Mount Target Security Group ID
+    Value: !Ref EFSSecurity
+  EFSID:
+    Description: Elastic File System ID
+    Value: !Ref EFS
+  MountTargetID:
+    Description: Elastic File System Mount Target ID
+    Value: !Ref MountTarget

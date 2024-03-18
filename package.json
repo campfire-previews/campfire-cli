@@ -1,0 +1,80 @@
+{
+  "name": "cli",
+  "version": "0.0.0",
+  "description": "testing preview app cli",
+  "keywords": [
+    "oclif"
+  ],
+  "homepage": "https://github.com/preview-app-team5/cli",
+  "bugs": "https://github.com/preview-app-team5/cli/issues",
+  "repository": "preview-app-team5/cli",
+  "license": "MIT",
+  "author": "preview-app-team5",
+  "type": "module",
+  "exports": "./lib/index.js",
+  "main": "",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "cli": "./bin/run.js"
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/oclif.manifest.json"
+  ],
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts",
+    "prepack": "npm run build && oclif manifest && oclif readme",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepare": "npm run build",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "posttest": "npm run lint",
+    "version": "oclif readme && git add README.md"
+  },
+  "oclif": {
+    "bin": "cli",
+    "commands": "./dist/commands",
+    "dirname": "cli",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "hello": {
+        "description": "Say hello to the world and others"
+      }
+    }
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.533.0",
+    "@aws-sdk/client-ecs": "^3.533.0",
+    "@oclif/core": "^3",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-plugins": "^4",
+    "conf": "^12.0.0",
+    "express": "^4.18.3",
+    "fs": "^0.0.1-security",
+    "inquirer": "^9.2.15"
+  },
+  "devDependencies": {
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^3",
+    "@types/chai": "^4",
+    "@types/mocha": "^10",
+    "@types/node": "^18",
+    "chai": "^4",
+    "eslint": "^8",
+    "eslint-config-oclif": "^5",
+    "eslint-config-oclif-typescript": "^3",
+    "eslint-config-prettier": "^9.1.0",
+    "mocha": "^10",
+    "oclif": "^4.4.19",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
