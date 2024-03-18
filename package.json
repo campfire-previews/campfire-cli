@@ -55,7 +55,7 @@
     "conf": "^12.0.0",
     "express": "^4.18.3",
     "fs": "^0.0.1-security",
-    "inquirer": "^9.2.15"
+    "inquirer": "^9.2.16"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
