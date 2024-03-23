@@ -47,7 +47,7 @@
     }
   },
   "dependencies": {
-    "@aws-sdk/client-cloudformation": "^3.533.0",
+    "@aws-sdk/client-cloudformation": "^3.540.0",
     "@aws-sdk/client-ecs": "^3.533.0",
     "@oclif/core": "^3",
     "@oclif/plugin-help": "^6",
