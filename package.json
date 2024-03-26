@@ -1,15 +1,31 @@
 {
-  "name": "campfire",
-  "version": "0.0.0",
+  "name": "campfire-cli",
+  "version": "1.0.0",
   "description": "Campfire CLI",
-  "keywords": [
-    "oclif"
-  ],
+  "keywords": [],
   "homepage": "https://github.com/campfire-previews/campfire-cli/",
   "bugs": "https://github.com/campfire-previews/campfire-cli/issues",
   "repository": "campfire-previews/campfire-cli/",
   "license": "MIT",
-  "author": "Campfire team",
+  "author": "Campfire",
+  "contributors": [
+    {
+      "name": "Allen Lee",
+      "email": "6207als@gmail.com"
+    },
+    {
+      "name": "Rachele Lang",
+      "email": "rachelelang7672@gmail.com"
+    },
+    {
+      "name": "Tess Lockey",
+      "email": ""
+    },
+    {
+      "name": "Weston Ludeke",
+      "email": "westonludeke@gmail.com"
+    }
+  ],
   "type": "module",
   "exports": "./lib/index.js",
   "main": "",
@@ -33,9 +49,9 @@
     "version": "oclif readme && git add README.md"
   },
   "oclif": {
-    "bin": "cli",
+    "bin": "campfire",
     "commands": "./dist/commands",
-    "dirname": "cli",
+    "dirname": "campfire",
     "plugins": [
       "@oclif/plugin-help"
     ],
