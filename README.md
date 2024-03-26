@@ -1,8 +1,6 @@
 Campfire CLI
 =================
 
-Built on the [oclif open cli framework](https://oclif.io/)
-
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
 [![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
@@ -15,13 +13,13 @@ Built on the [oclif open cli framework](https://oclif.io/)
 <!-- usage -->
 ```sh-session
 $ npm install -g cli
-$ cli COMMAND
+$ campfire COMMAND
 running command...
-$ cli (--version)
-cli/0.0.0 darwin-arm64 node-v21.5.0
-$ cli --help [COMMAND]
+$ campfire (--version)
+cli/1.0.0 darwin-arm64 node-v21.5.0
+$ campfire --help [COMMAND]
 USAGE
-  $ cli COMMAND
+  $ campfire COMMAND
 ...
 ```
 <!-- usagestop -->
@@ -35,7 +33,7 @@ Display help for cli.
 
 ```
 USAGE
-  $ cli help [COMMAND] [-n]
+  $ campfire help [COMMAND] [-n]
 
 ARGUMENTS
   COMMAND  Command to show help for.
