@@ -12,7 +12,7 @@ Campfire CLI
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g cli
+$ npm install -g campfire-cli
 $ campfire COMMAND
 running command...
 $ campfire (--version)
@@ -25,9 +25,9 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`cli help [COMMAND]`](#cli-help-command)
+* [`campfire help [COMMAND]`](#campfire-help-command)
 
-## `cli help [COMMAND]`
+## `campfire help [COMMAND]`
 
 Display help for cli.
 
