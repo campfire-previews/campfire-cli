@@ -29,21 +29,21 @@ const config = new Conf({ projectName: DEFAULT_NAME });
 
 async function awsConfiguration() {
   if (config.size > 0) {
-    log.warn('There is already existing previewApp infrastructure.');
-    log.error('Please destroy first using `previewApp destroy`.');
+    log.warn('There is already existing Campfire infrastructure.');
+    log.error('Please destroy first using `campfire destroy`.');
     process.exit(0);
   }
   const initialConfig = await prompts.welcome();
   config.set('AWS_REGION', initialConfig.awsRegion);
 
   log.text('')
-  process.stdout.write('Your previewApp configuration file lives at ');
+  process.stdout.write('Your Campfire preview configuration file lives at '); 
   log.info(config.path);
 
   api.clients.cloudFormation = await api.initializeCfClient(config.get('AWS_REGION')) as any;
 
-  log.header('\nGenerating your previewApp infrastructure.');
-  log.text('In the mean time, feel free to take a stretch and grab some coffee ☕\n');
+  log.header('\nGenerating your Campfire preview infrastructure...');
+  log.text("Almost there! Feel free to pet your cat or water your plants while you wait 🐕🌱\n");
 
   await api.createStack({
     StackName: DEFAULT_NAME,
@@ -93,7 +93,7 @@ async function awsConfiguration() {
 
   log.text('   ');
   log.header('Create a CNAME record at your custom domain');
-  process.stdout.write("Map '*.previewApp' to this DNS Name:  ");
+  process.stdout.write("Map '*.previewApp' to this DNS Name:  "); // update?
   log.info(outputs.ALBDomain);
 
   log.header('\nCreate these two GitHub Secrets in your repositories:');
@@ -101,13 +101,13 @@ async function awsConfiguration() {
   log.info(outputs.AccessKeyId)
   process.stdout.write("AWS_SECRET_ACCESS_KEY  ");
   log.info(outputs.AccessKeySecret)
-  log.text('\nIt may take around 10 minutes for AWS to fully spin up all infrastructure pieces. \nBut for now, we\'re all done! 🤓');
+  log.text('\nIt may take around 10 minutes for AWS to fully spin up all infrastructure pieces.');
   
 }
 
 
 export default class Setup extends Command {
-  static description = 'Initialize AWS infrastructure for preview app'
+  static description = 'Initialize AWS infrastructure for Campfire'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',

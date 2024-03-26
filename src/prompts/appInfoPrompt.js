@@ -27,7 +27,7 @@ const serverPathValidator = async input => {
 };
 
 const appInfoPrompt = async () => {
-  log.header('\nNow we just need a few pieces of information to finish configuring PreviewApp in this repository');
+  log.header('\nNow we just need a few pieces of info to finish configuring Campfire in this repository');
   const response = await inquirer.prompt([{
     name: 'APP_NAME',
     message: 'What is the name of your app?',

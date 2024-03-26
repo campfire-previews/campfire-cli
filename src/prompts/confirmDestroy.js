@@ -5,19 +5,19 @@ import inquirer from 'inquirer';
 import log from '../util/log.js';
 
 const confirmDestroy = async () => {
-  log.warn('This will delete all PreviewApp code and infrastructure.');
+  log.warn('This will delete all Campfire code and infrastructure.');
   log.warn('It is essential to close all open pull requests before proceeding.');
   const response = await inquirer.prompt([{
     name: 'closedAllPrs',
-    message: 'Have you closed all PRs in PreviewApp repositories?',
+    message: 'Have you closed all PRs in Campfire repositories?',
     type: 'list',
     choices: [{ name: 'No' }, { name: 'Yes' }],
   },
   {
     name: 'iAmSure',
-    message: 'Are you sure that you want to remove PreviewApp?',
+    message: 'Are you sure that you want to remove Campfire?',
     type: 'list',
-    choices: [{ name: 'No' }, { name: 'Yes, destroy PreviewApp' }],
+    choices: [{ name: 'No' }, { name: 'Yes, destroy Campfire' }],
   }]);
   return response;
 };
