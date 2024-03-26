@@ -1,7 +1,7 @@
-oclif-hello-world
+Campfire CLI
 =================
 
-oclif example Hello World CLI
+Built on the [oclif open cli framework](https://oclif.io/)
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
