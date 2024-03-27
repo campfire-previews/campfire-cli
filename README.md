@@ -1,7 +1,5 @@
-oclif-hello-world
+Campfire CLI
 =================
-
-oclif example Hello World CLI
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
@@ -14,28 +12,28 @@ oclif example Hello World CLI
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g cli
-$ cli COMMAND
+$ npm install -g campfire-cli
+$ campfire COMMAND
 running command...
-$ cli (--version)
-cli/0.0.0 darwin-arm64 node-v21.5.0
-$ cli --help [COMMAND]
+$ campfire (--version)
+cli/1.0.0 darwin-arm64 node-v21.5.0
+$ campfire --help [COMMAND]
 USAGE
-  $ cli COMMAND
+  $ campfire COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`cli help [COMMAND]`](#cli-help-command)
+* [`campfire help [COMMAND]`](#campfire-help-command)
 
-## `cli help [COMMAND]`
+## `campfire help [COMMAND]`
 
 Display help for cli.
 
 ```
 USAGE
-  $ cli help [COMMAND] [-n]
+  $ campfire help [COMMAND] [-n]
 
 ARGUMENTS
   COMMAND  Command to show help for.

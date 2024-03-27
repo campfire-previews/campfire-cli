@@ -27,28 +27,28 @@ const serverPathValidator = async input => {
 };
 
 const appInfoPrompt = async () => {
-  log.header('\nNow we just need a few pieces of information to finish configuring PreviewApp in this repository');
+  log.header('\nNow we just need a few pieces of info to finish configuring Campfire in this repository');
   const response = await inquirer.prompt([{
     name: 'APP_NAME',
     message: 'What is the name of your app?',
     type: 'input',
     validate: appNameValidator,
   },
-  {
-    name: 'APP_LANGUAGE',
-    message: 'What is your project written in?',
-    type: 'list',
-    choices: [
-      { name: 'Java', value: PaketoBase},
-      { name: 'NodeJS', value: PaketoBase},
-      { name: 'Ruby', value: PaketoFull},
-      { name: 'python', value: Google},
-      { name: 'golang', value: PaketoBase},
-      { name: '.NET Core', value: PaketoBase},
-      { name: 'PHP', value: PaketoFull},
-      { name: 'Procfile', value: PaketoBase},
-    ],
-  },
+  // {
+  //   name: 'APP_LANGUAGE',
+  //   message: 'What is your project written in?',
+  //   type: 'list',
+  //   choices: [
+  //     { name: 'Java', value: PaketoBase},
+  //     { name: 'NodeJS', value: PaketoBase},
+  //     { name: 'Ruby', value: PaketoFull},
+  //     { name: 'python', value: Google},
+  //     { name: 'golang', value: PaketoBase},
+  //     { name: '.NET Core', value: PaketoBase},
+  //     { name: 'PHP', value: PaketoFull},
+  //     { name: 'Procfile', value: PaketoBase},
+  //   ],
+  // },
   {
     name: 'APP_SERVER_PATH',
     message: 'What directory is your application\'s entrypoint in?',

@@ -1,7 +1,7 @@
 import {Args, Command, Flags} from '@oclif/core'
 
 export default class List extends Command {
-  static description = 'List all active preview environments'
+  static description = 'List all active Campfire preview environments'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -22,7 +22,7 @@ export default class List extends Command {
     const {args, flags} = await this.parse(List)
 
     const name = flags.name ?? 'world'
-    this.log(`listing all active preview environments`)
+    this.log(`listing all active Campfire preview environments`)
     if (args.file && flags.force) {
       this.log(`you input --force and --file: ${args.file}`)
     }

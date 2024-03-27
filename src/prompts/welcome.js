@@ -6,14 +6,14 @@ import log from '../util/log.js';
 
 const welcome = async () => {
   // log.printLogo()
-  log.header('Welcome to PreviewApp-CLI!');
+  log.header('Welcome to Campfire!');
 
   log.text('\nTo help you get set up, please make sure you have your AWS credentials configured with the CLI.\n');
 
   const response = await inquirer.prompt([
   {
     name: 'awsRegion',
-    message: 'What AWS region do you want PreviewApp to operate in?',
+    message: 'What AWS region do you want Campfire to operate in?',
     type: 'input',
     default: 'us-east-1',
   }]);
